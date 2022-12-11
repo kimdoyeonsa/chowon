@@ -1,14 +1,11 @@
 from math import ceil
 import sys
-
+from common import *
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtWidgets import *
-
 from PyQt5.QtCore import *
 from PyQt5.QtSql import *
-
 import sqlquery
-from common import *
 
 
 def prepareDatabase():
@@ -17,8 +14,12 @@ def prepareDatabase():
     db.open()
 edit_file = common.resource_path("./update_edit.ui")
 class editDialog(QDialog):
-    def __init__(self,id):
+    edit_finish_signal = pyqtSignal() ##### 추가
+    def __init__(self,):
         QDialog.__init__(self)
+        ####### __init__()에 있는 문장들을 아래 show_dialog() 함수로 다 옮김
+
+    def show_dialog(self, id): ######## 추가
         uic.loadUi(edit_file, self)
         self.q = QSqlQuery()
         self.id=id
@@ -167,8 +168,9 @@ class editDialog(QDialog):
                     self.ycloth_checkBox.setChecked(False)
                     QMessageBox.about(self, "수정완료", "수정완료 하였습니다.")
         self.close()
-        main = MainWindow()
-        main.loaddata()
+        # main = MainWindow() ##### 삭제
+        # main.loaddata() ##### 삭제
+        self.edit_finish_signal.emit()  ##### 추가
 
     def msgexec(self):
            return QMessageBox.exec()
@@ -179,6 +181,10 @@ class MainWindow(QDialog):
     def __init__(self):
         QDialog.__init__(self)
         uic.loadUi(ui_file, self)
+
+        self.edit_dialog = editDialog()  ##### 추가
+        self.id_signal.connect(self.edit_dialog.show_dialog)  ##### 추가
+        self.edit_dialog.edit_finish_signal.connect(self.loaddata) ##### 추가
 
         self.page = 1
         self.perpage = 15
@@ -213,8 +219,10 @@ class MainWindow(QDialog):
         try:
             crow = self.modificar_Widget.currentRow()
             id = self.modificar_Widget.item(crow, 0).text()
-            editdialog=editDialog(id)
-            editdialog.exec()
+
+            # editdialog=editDialog(id) ###### 삭제
+            # editdialog.exec() ###### 삭제
+            self.id_signal.emit(id)  ##### 추가
         except:
             print("")
 
@@ -240,6 +248,7 @@ class MainWindow(QDialog):
             count = self.q.value(0)
         return count
     def loaddata(self):
+        self.modificar_Widget.update()
         self.modificar_Widget.setRowCount(0)
         self.modificar_Widget.setColumnCount(8)
         # rowp = 0
