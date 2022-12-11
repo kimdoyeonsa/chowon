@@ -173,8 +173,6 @@ class MainWindow(QDialog):
 
 
 
-
-
 def start():
     app = QApplication(sys.argv)
     app.setStyle("fusion")

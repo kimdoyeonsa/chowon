@@ -21,24 +21,7 @@ class MainWindow(QDialog):
         uic.loadUi(ui_file, self)
         self.page = 1
         self.perpage = 15
-        #검색
-        #
-        # self.buscarModel = QSqlQueryModel(self)
-        # self.buscarModel.setQuery(sqlquery.select())
-        # self.buscar_tableView.setModel(self.buscarModel)
-        # self.buscar_nombre_lineEdit.textEdited.connect(self.onBuscar)
-        # self.buscarModelcnt = QSqlQueryModel(self)
-        # self.buscarModelcnt.setQuery(sqlquery.selectall())
-        # self.totalblock = ceil(self.buscarModelcnt.rowCount() / self.perpage)
-        #
-        # if (self.page >= 1):
-        #     self.searchprev.clicked.connect(self.decrement)
-        #     self.searchprev.setVisible(False)
-        # else:
-        #     pass
-        # self.searchnext.clicked.connect(self.increment)
-        #
-        # self.labePlus.setText(str(self.page))
+
         self.q = QSqlQuery()
         self.buscar_nombre_lineEdit.returnPressed.connect(self.loaddata)
 
@@ -127,55 +110,6 @@ class MainWindow(QDialog):
             self.searchnext.setVisible(False)
             self.searchprev.setVisible(True)
 
-
-
-    # def refreshTables(self):
-    #     self.buscarModel.setQuery(sqlquery.select())
-
-
-        # self.modificarModel.beforeUpdate.connect(self.onModificarModel_beforeUpdate)
-
-    # def onUpdata(self):
-    #     self.modificarModel = QSqlTableModel(self)
-    #     self.modificarModel.select()
-    #     self.modificarModel.setTable("empleado")
-
-    # def decrement(self):
-    #     self.page -= 1
-    #     if self.page>=1:
-    #         self.searchnext.setVisible(True)
-    #         self.labePlus.setText(str(self.page))
-    #         self.buscarModel.setQuery(sqlquery.selectpage(self.page, self.perpage))
-    #     else:
-    #         self.searchprev.setVisible(False)
-    #         self.searchnext.setVisible(True)
-    #
-    # def increment(self):
-    #     self.page += 1
-    #     if(self.page<=self.totalblock):
-    #         self.searchprev.setVisible(True)
-    #         self.labePlus.setText(str(self.page))
-    #         self.buscarModel.setQuery(sqlquery.selectpage(self.page, self.perpage))
-    #     else:
-    #         self.searchprev.setVisible(True)
-    #         self.searchnext.setVisible(False)
-    # # def btnUpdate(self):
-    # #     self.modificarQuery = QSqlQueryModel(self)
-    # #     self.modificarQuery.setQuery("select * from empleado order by id desc")
-    # #     self.modificar_tableView.setModel(self.modificarQuery)
-    #
-    #
-    #
-    #
-    #
-    # def onBuscar(self, txt):
-    #     if self.comboBoxSearch.currentText() == "이름/아파트동호수":
-    #         self.buscarModel.setQuery(sqlquery.search("nombre", txt))
-    #     if self.comboBoxSearch.currentText() == "아이디":
-    #         self.buscarModel.setQuery(sqlquery.search("id", txt))
-    #     if self.comboBoxSearch.currentText() == "연락처":
-    #         self.buscarModel.setQuery(sqlquery.search("edad", txt))
-    #
 
 def start():
     app = QApplication(sys.argv)

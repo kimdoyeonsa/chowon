@@ -180,11 +180,6 @@ class MainWindow(QDialog):
         QDialog.__init__(self)
         uic.loadUi(ui_file, self)
 
-        # self.modificarTimer = QTimer(self)
-        # self.modificarTimer.setSingleShot(True)
-        # self.modificarTimer.setInterval(500)
-        # self.modificarTimer.timeout.connect(self.onModificar)
-
         self.page = 1
         self.perpage = 15
         self.q=QSqlQuery()
@@ -306,65 +301,7 @@ class MainWindow(QDialog):
             self.modificar_Widget.setItem(tablerow, 7, QtWidgets.QTableWidgetItem(self.q.value(7)))
             tablerow += 1
         self.modificar_Widget.resizeColumnsToContents()
-    # self.modificarModelq = QSqlQueryModel(self)
-        # self.modificarModel = QSqlTableModel(self)
-        # self.modificarModelq.setQuery(sqlquery.select())
-        # self.modificarModel.select()
-        # self.modificar_tableView.setModel(self.modificarModelq)
-        # self.modificarModel.setTable("empleado")
-        # # self.modificar_lineEdit.textEdited.connect(self.onModificarSerch)
-        # # self.modificarModel.beforeUpdate.connect(self.onModificarModel_beforeUpdate)
-        # self.modificarModelcnt = QSqlQueryModel(self)
-        # self.modificarModelcnt.setQuery(sqlquery.selectall())
-        # self.totalblock = ceil(self.modificarModelcnt.rowCount() / self.perpage)
 
-
-    #     if(self.page>=1):
-    #         self.searchprev.clicked.connect(self.decrement)
-    #         self.searchprev.setVisible(False)
-    #     else:
-    #         pass
-    #     self.searchnext.clicked.connect(self.increment)
-    #
-    # def flags(self, index):
-    #     return  Qt.ItemIsEditable
-    #
-    # def decrement(self):
-    #     self.page -= 1
-    #     if self.page >= 1:
-    #         self.searchnext.setVisible(True)
-    #         self.labePlus.setText(str(self.page))
-    #         self.modificarModelq.setQuery(sqlquery.selectpage(self.page, self.perpage))
-    #     else:
-    #         self.searchprev.setVisible(False)
-    #
-    # def increment(self):
-    #     self.page += 1
-    #     if (self.page <= self.totalblock):
-    #         self.searchprev.setVisible(True)
-    #         self.labePlus.setText(str(self.page))
-    #         self.modificarModelq.setQuery(sqlquery.selectpage(self.page, self.perpage))
-    #     else:
-    #         self.searchnext.setVisible(False)
-
-    # def onModificarModel_beforeUpdate(self,row,record):
-    #     self.modificarTimer.start()
-    #
-    #
-    # def refreshTables(self):
-    #     self.modificarModelq.setQuery(sqlquery.select())
-    #
-    # def onModificar(self):
-    #     self.refreshTables()
-    #
-    # def onModificarSerch(self, txt):
-    #     if self.comboBoxSearch.currentText() == "이름/아파트동호수":
-    #         self.modificarModelq.setQuery(sqlquery.search("nombre",txt))
-    #     if self.comboBoxSearch.currentText() == "아이디":
-    #         self.modificarModelq.setQuery(sqlquery.search("id",txt))
-    #     if self.comboBoxSearch.currentText() == "연락처":
-    #         self.modificarModelq.setQuery(sqlquery.search("edad",txt))
-    #
 
 
 def start():
