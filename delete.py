@@ -83,7 +83,7 @@ class MainWindow(QDialog):
         self.eliminar_Widget.setRowCount(15)
         self.eliminar_Widget.setHorizontalHeaderLabels(
             ["id", "nombre","dong_name", "edad", "salario", "inPutOutput", "pay", "regdate"])
-        self.q.exec(sqlquery.selectpage(self.comboboxret(), self.nombretxtret(), self.page, self.perpage))
+        self.q.exec(sqlquery.selectpage(self.comboboxret(), self.nombretxtret(), self.page, self.perpage,"asc"))
         tablerow = 0
         while (self.q.next()):
             self.eliminar_Widget.setItem(tablerow, 0, QtWidgets.QTableWidgetItem(str(self.q.value(0))))
@@ -115,14 +115,16 @@ class MainWindow(QDialog):
         else:
             self.searchnext.setVisible(False)
             self.searchprev.setVisible(True)
+    #전부 삭제
     def btnDelAll(self):
         if QMessageBox.question(self, "Elminar", "다 지울까요?", QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
             self.q.exec(sqlquery.deleteall())
             self.loaddata()
+    #단일 삭제
     def btnDel(self):
         try:
-            crow = self.eliminar_Widget.currentRow()
-            id = self.eliminar_Widget.item(crow, 0).text()
+            crow = self.eliminar_Widget.currentRow() #현재의 row를 가져옮.
+            id = self.eliminar_Widget.item(crow, 0).text()#item에서 row,column값의 텍스트를 가져옮
             if QMessageBox.question(self, "Elminar", "지울까요?", QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
                 self.q.prepare(sqlquery.delete())
                 self.q.bindValue(0,str(id))

@@ -259,7 +259,7 @@ class MainWindow(QDialog):
         self.modificar_Widget.setHorizontalHeaderLabels(
             ["id", "nombre","dong_name", "edad", "salario", "inPutOutput", "pay", "regdate"])
 
-        self.q.exec(sqlquery.selectpage(self.comboboxret(), self.nombretxtret(), self.page, self.perpage))
+        self.q.exec(sqlquery.selectpage(self.comboboxret(), self.nombretxtret(), self.page, self.perpage,"asc"))
         tablerow = 0
         while (self.q.next()):
             self.modificar_Widget.setItem(tablerow, 0, QtWidgets.QTableWidgetItem(str(self.q.value(0))))
@@ -297,7 +297,7 @@ class MainWindow(QDialog):
         self.modificar_Widget.setRowCount(15)
         self.modificar_Widget.setHorizontalHeaderLabels(
             ["id", "nombre","dong_name", "edad", "salario", "inPutOutput", "pay", "regdate"])
-        self.q.exec(sqlquery.selectupdate(self.comboboxret(), self.nombretxtret(), self.page, self.perpage))
+        self.q.exec(sqlquery.selectpage(self.comboboxret(), self.nombretxtret(), self.page, self.perpage,"desc"))
         tablerow = 0
         while (self.q.next()):
             self.modificar_Widget.setItem(tablerow, 0, QtWidgets.QTableWidgetItem(str(self.q.value(0))))

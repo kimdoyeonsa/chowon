@@ -34,11 +34,11 @@ def selectid():
 def select():
     sql="select * from empleado order by id desc limit 15"
     return sql
-def selectpage(keyfield,txt,currpage,perpage):
+def selectpage(keyfield,txt,currpage,perpage,orderby):
     sql=f"select * from empleado"
     if txt!="":
         sql+=" where "+keyfield+" like '%" + txt + "%'"
-    sql+=f" order by regdate asc limit {(currpage-1)*perpage},{perpage} "
+    sql+=f" order by regdate {orderby} limit {(currpage-1)*perpage},{perpage} "
     return sql
 def search(keyfield,txt):
     sql="select * from empleado where "+keyfield+" like '%" + txt + "%' order by id desc "

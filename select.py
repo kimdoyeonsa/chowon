@@ -68,6 +68,7 @@ class MainWindow(QDialog):
         if self.q.next():
             count=self.q.value(0)
         return count
+    #검색 페이징
     def loaddata(self):
         self.buscar_Widget.setRowCount(0)
         self.buscar_Widget.setColumnCount(8)
@@ -78,7 +79,7 @@ class MainWindow(QDialog):
         self.buscar_Widget.setRowCount(15)
         self.buscar_Widget.setHorizontalHeaderLabels(
             ["id", "nombre","dong_name", "edad", "salario", "inPutOutput", "pay", "regdate"])
-        self.q.exec(sqlquery.selectpage(self.comboboxret(),self.nombretxtret(),self.page,self.perpage))
+        self.q.exec(sqlquery.selectpage(self.comboboxret(),self.nombretxtret(),self.page,self.perpage,"asc"))
         tablerow=0
         while(self.q.next()):
            self.buscar_Widget.setItem(tablerow, 0, QtWidgets.QTableWidgetItem(str(self.q.value(0))))

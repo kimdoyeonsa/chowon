@@ -100,14 +100,14 @@ class MainWindow(QDialog):
 
         # self.salario_lineEdit.insert(f'{self.dry}{self.repair}{self.iron}{self.outdoor}{self.long}{self.cote}{self.sweater}{self.pent}{self.cloth}{self.set}{self.ycloth}')
 
-    def maxval(self):
+    def nextval(self):
         q = QSqlQuery()
         q.exec(sqlquery.selectmax())
         rec=q.record()
         numrows=0
         if q.next():
            numrows=q.value(0)
-        return numrows
+        return int(numrows)+1
 
     def onAgregar(self):
         dong_name = self.dong_name_combo.currentText()
@@ -133,7 +133,7 @@ class MainWindow(QDialog):
             edad = str(edad)
 
             self.q.prepare(sqlquery.insert())
-            self.q.addBindValue(int(self.maxval())+1)
+            self.q.addBindValue(self.nextval())
 
             self.q.bindValue(1, nombre)
 
