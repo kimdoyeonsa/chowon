@@ -404,7 +404,6 @@ class MainWindow(QDialog):
         return count
     #검색 페이징
     def loaddata(self):
-        self.pagebtn()
         self.select_Widget.setRowCount(0)
         self.select_Widget.setColumnCount(8)
         # rowp = 0
@@ -414,6 +413,7 @@ class MainWindow(QDialog):
         self.select_Widget.setRowCount(15)
         self.select_Widget.setHorizontalHeaderLabels(
             ["id", "nombre","dong_name", "edad", "salario", "inPutOutput", "pay", "regdate"])
+        self.pagebtn()
         self.q.exec(sqlquery.selectpage(self.comboboxret(),self.nombretxtret(),self.page,self.perpage,"asc"))
         tablerow=0
         while(self.q.next()):
@@ -457,27 +457,10 @@ class MainWindow(QDialog):
                      QMessageBox.warning(self,"Elminar","지웠습니다")
                  self.loaddata()
          except:
-             print("")
+             QMessageBox.warning(self, "Elminar", "선택이 되어있지 않습니다.")
 
     def regorderupdate(self):
-        self.select_Widget.setRowCount(0)
-        self.select_Widget.setColumnCount(8)
-        self.select_Widget.setRowCount(15)
-        self.select_Widget.setHorizontalHeaderLabels(
-            ["id", "nombre", "dong_name", "edad", "salario", "inPutOutput", "pay", "regdate"])
-        self.q.exec(sqlquery.selectpage(self.comboboxret(), self.nombretxtret(), self.page, self.perpage, "desc"))
-        tablerow = 0
-        while (self.q.next()):
-            self.select_Widget.setItem(tablerow, 0, QtWidgets.QTableWidgetItem(str(self.q.value(0))))
-            self.select_Widget.setItem(tablerow, 1, QtWidgets.QTableWidgetItem(str(self.q.value(1))))
-            self.select_Widget.setItem(tablerow, 2, QtWidgets.QTableWidgetItem(str(self.q.value(2))))
-            self.select_Widget.setItem(tablerow, 3, QtWidgets.QTableWidgetItem(str(self.q.value(3))))
-            self.select_Widget.setItem(tablerow, 4, QtWidgets.QTableWidgetItem(self.q.value(4)))
-            self.select_Widget.setItem(tablerow, 5, QtWidgets.QTableWidgetItem(self.q.value(5)))
-            self.select_Widget.setItem(tablerow, 6, QtWidgets.QTableWidgetItem(self.q.value(6)))
-            self.select_Widget.setItem(tablerow, 7, QtWidgets.QTableWidgetItem(self.q.value(7)))
-            tablerow += 1
-        self.select_Widget.resizeColumnsToContents()
+        self.loaddata()
 
     def btnDelAll(self):
         if QMessageBox.question(self, "Elminar", "다 지울까요?", QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
@@ -489,7 +472,7 @@ class MainWindow(QDialog):
             id = self.select_Widget.item(crow, 0).text()  # item에서 row,column값의 텍스트를 가져옮
             self.id_signal.emit(id)
         except:
-            print()
+            QMessageBox.warning(self, "update", "선택이 되어있지 않습니다.")
 
     def maxval(self):
         q = QSqlQuery()
