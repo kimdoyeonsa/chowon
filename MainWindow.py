@@ -269,7 +269,6 @@ class updateMainWindow(QDialog):
             self.edad_lineEdit.setText(str(self.q.value(3)))
 
     def updatebtn(self):
-        print(self.id)
         dong_name = self.dong_name_combo.currentText()
         nombre = self.nombre_lineEdit.text()
         edad = self.edad_lineEdit.text()
@@ -338,10 +337,11 @@ class updateMainWindow(QDialog):
 ui_file = common.resource_path("./MainWindow.ui")
 
 class MainWindow(QDialog):
-    signal = pyqtSignal(int)
+    signal = pyqtSignal(int,int)
     id_signal = pyqtSignal(str)
     def __init__(self):
         QDialog.__init__(self)
+
         uic.loadUi(ui_file, self)
 
         self.q = QSqlQuery()
@@ -359,28 +359,23 @@ class MainWindow(QDialog):
         self.buttonDelAll.clicked.connect(self.btnDelAll)
         self.page = 1
         self.perpage = 15
-        self.totalblock=ceil(self.totalcount()/self.perpage)
         self.pagebtn()
         self.loaddata()
+    def show_init(self):
+        self.totalblock=ceil(self.totalcount()/self.perpage)
+
     def pagebtn(self):
-        if self.totalblock==1:
-            self.searchprev.setVisible(False)
+        self.show_init()
+        if self.page >= 1:
             self.searchnext.setVisible(False)
-        else:
-            if self.page >= 1:
-                self.searchnext.setVisible(False)
-                self.searchprev.setVisible(True)
-                self.searchprev.clicked.connect(self.decrement)
-            else:
-                self.searchnext.setVisible(True)
-                self.searchprev.setVisible(False)
-            if self.page<=self.totalblock:
-                self.searchnext.setVisible(True)
-                self.searchprev.setVisible(False)
-                self.searchnext.clicked.connect(self.increment)
-            else:
-                self.searchnext.setVisible(False)
-                self.searchprev.setVisible(True)
+            self.searchprev.setVisible(True)
+            self.searchprev.clicked.connect(self.decrement)
+
+        if self.page<=self.totalblock:
+            self.searchnext.setVisible(True)
+            self.searchprev.setVisible(False)
+            self.searchnext.clicked.connect(self.increment)
+
 
     def nombretxtret(self):
         nombretxt=self.select_lineEdit.text()
@@ -440,6 +435,7 @@ class MainWindow(QDialog):
         self.page+=1
         if(self.page<=self.totalblock):
             self.labePlus.setText(str(self.page))
+            self.searchnext.setVisible(True)
             self.loaddata()
 
         else:
@@ -460,7 +456,29 @@ class MainWindow(QDialog):
              QMessageBox.warning(self, "Elminar", "선택이 되어있지 않습니다.")
 
     def regorderupdate(self):
-        self.loaddata()
+        self.select_Widget.setRowCount(0)
+        self.select_Widget.setColumnCount(8)
+        # rowp = 0
+        # if self.page == 1:
+        #     rowp = self.totalcount() - self.perpage
+        # rowcount = self.totalcount() - ((self.page - 1) * self.perpage) - rowp
+        self.select_Widget.setRowCount(15)
+        self.select_Widget.setHorizontalHeaderLabels(
+            ["id", "nombre", "dong_name", "edad", "salario", "inPutOutput", "pay", "regdate"])
+
+        self.q.exec(sqlquery.selectpage(self.comboboxret(), self.nombretxtret(), self.page, self.perpage, "desc"))
+        tablerow = 0
+        while (self.q.next()):
+            self.select_Widget.setItem(tablerow, 0, QtWidgets.QTableWidgetItem(str(self.q.value(0))))
+            self.select_Widget.setItem(tablerow, 1, QtWidgets.QTableWidgetItem(str(self.q.value(1))))
+            self.select_Widget.setItem(tablerow, 2, QtWidgets.QTableWidgetItem(str(self.q.value(2))))
+            self.select_Widget.setItem(tablerow, 3, QtWidgets.QTableWidgetItem(str(self.q.value(3))))
+            self.select_Widget.setItem(tablerow, 4, QtWidgets.QTableWidgetItem(self.q.value(4)))
+            self.select_Widget.setItem(tablerow, 5, QtWidgets.QTableWidgetItem(self.q.value(5)))
+            self.select_Widget.setItem(tablerow, 6, QtWidgets.QTableWidgetItem(self.q.value(6)))
+            self.select_Widget.setItem(tablerow, 7, QtWidgets.QTableWidgetItem(self.q.value(7)))
+            tablerow += 1
+        self.select_Widget.resizeColumnsToContents()
 
     def btnDelAll(self):
         if QMessageBox.question(self, "Elminar", "다 지울까요?", QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
@@ -484,7 +502,7 @@ class MainWindow(QDialog):
     def btnins(self):
         try:
             nextval=int(self.maxval())+1
-            self.signal.emit(nextval)
+            self.signal.emit(nextval,self.page)
         except:
             print()
 
