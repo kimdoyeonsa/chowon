@@ -366,16 +366,18 @@ class MainWindow(QDialog):
 
     def pagebtn(self):
         self.show_init()
-        if self.page >= 1:
+        if self.totalblock==1:
+            if self.page==1:
+                self.searchnext.setVisible(False)
+                self.searchprev.setVisible(False)
+        if self.page >=1:
             self.searchnext.setVisible(False)
             self.searchprev.setVisible(True)
             self.searchprev.clicked.connect(self.decrement)
-
         if self.page<=self.totalblock:
             self.searchnext.setVisible(True)
             self.searchprev.setVisible(False)
             self.searchnext.clicked.connect(self.increment)
-
 
     def nombretxtret(self):
         nombretxt=self.select_lineEdit.text()
@@ -424,6 +426,10 @@ class MainWindow(QDialog):
         self.select_Widget.resizeColumnsToContents()
     def decrement(self):
         self.page -= 1
+        if self.totalblock==1:
+            if self.page==1:
+                self.searchnext.setVisible(False)
+                self.searchprev.setVisible(False)
         if self.page >= 1:
             self.searchprev.setVisible(True)
             self.labePlus.setText(str(self.page))
@@ -431,16 +437,21 @@ class MainWindow(QDialog):
         else:
             self.searchnext.setVisible(True)
             self.searchprev.setVisible(False)
+
     def increment(self):
         self.page+=1
+        if self.totalblock==1:
+            if self.page==1:
+                self.searchnext.setVisible(False)
+                self.searchprev.setVisible(False)
         if(self.page<=self.totalblock):
             self.labePlus.setText(str(self.page))
             self.searchnext.setVisible(True)
             self.loaddata()
-
         else:
             self.searchnext.setVisible(False)
             self.searchprev.setVisible(True)
+
 
     def btnDel(self):
          try:
@@ -465,7 +476,7 @@ class MainWindow(QDialog):
         self.select_Widget.setRowCount(15)
         self.select_Widget.setHorizontalHeaderLabels(
             ["id", "nombre", "dong_name", "edad", "salario", "inPutOutput", "pay", "regdate"])
-
+        self.pagebtn()
         self.q.exec(sqlquery.selectpage(self.comboboxret(), self.nombretxtret(), self.page, self.perpage, "desc"))
         tablerow = 0
         while (self.q.next()):
