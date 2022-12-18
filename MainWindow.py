@@ -426,10 +426,6 @@ class MainWindow(QDialog):
         self.select_Widget.resizeColumnsToContents()
     def decrement(self):
         self.page -= 1
-        if self.totalblock==1:
-            if self.page==1:
-                self.searchnext.setVisible(False)
-                self.searchprev.setVisible(False)
         if self.page >= 1:
             self.searchprev.setVisible(True)
             self.labePlus.setText(str(self.page))
@@ -440,10 +436,6 @@ class MainWindow(QDialog):
 
     def increment(self):
         self.page+=1
-        if self.totalblock==1:
-            if self.page==1:
-                self.searchnext.setVisible(False)
-                self.searchprev.setVisible(False)
         if(self.page<=self.totalblock):
             self.labePlus.setText(str(self.page))
             self.searchnext.setVisible(True)
