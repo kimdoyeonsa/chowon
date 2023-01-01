@@ -8,7 +8,7 @@ a = Analysis(
     ['MainWindow.py','sqlquery.py','common.py'],
     pathex=[],
     binaries=[],
-    datas=[('./MainWindow.ui','.'),('./insert.ui','.'),('./update_edit.ui','.')],
+    datas=[('./MainWindow.ui','.'),('./read.ui','.'),('./edit.ui','.'),('.(./sal_update.ui','.'),('./seltbl.ui','.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
