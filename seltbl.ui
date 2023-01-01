@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>996</width>
+    <height>824</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QTableWidget" name="sel_tableWidget">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>20</y>
+     <width>891</width>
+     <height>671</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labePlus">
+   <property name="geometry">
+    <rect>
+     <x>510</x>
+     <y>710</y>
+     <width>41</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>1</string>
+   </property>
+  </widget>
+  <widget class="QCommandLinkButton" name="searchnext">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>720</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>다음&gt;</string>
+   </property>
+   <property name="icon">
+    <iconset theme="화살표">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+  </widget>
+  <widget class="QCommandLinkButton" name="searchprev">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>720</y>
+     <width>71</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;이전</string>
+   </property>
+   <property name="icon">
+    <iconset theme="화살표">
+     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnadd">
+   <property name="geometry">
+    <rect>
+     <x>680</x>
+     <y>770</y>
+     <width>81</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>추가</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnupd">
+   <property name="geometry">
+    <rect>
+     <x>780</x>
+     <y>770</y>
+     <width>81</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>수정</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btndel">
+   <property name="geometry">
+    <rect>
+     <x>880</x>
+     <y>770</y>
+     <width>81</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>삭제</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
