@@ -27,7 +27,7 @@ def update():
     sql="update empleado set nombre=?,dong_name=?,edad=? where id=?"
     return sql
 def sal_update():
-    sql="update sal_emple set salario=?,inPutOutput=?,pay=? where sal_id=? and id=?"
+    sql="update sal_emple set salario=?,inPutOutput=?,pay=? where id=?"
     return sql
 
 def insert():
@@ -78,10 +78,10 @@ def selectuser(nombre,edad):
 def selectusercnt(nombre,edad):
     sql=f"select count(*) from empleado where nombre='{nombre}' and edad='{edad}'"
     return sql
-def sal_emple_inner():
-    sql = "select sal_e.id,e.nombre,e.dong_name,e.edad,e.regdate,sal_e.salario,sal_e.inPutOutput,sal_e.pay,sal_e.regdate from empleado as e inner join sal_emple as sal_e on e.id=sal_e.sal_id"
+def sal_emple_i_w(id):
+    sql=f"select sal_e.id,sal_e.salario,sal_e.inPutOutput,sal_e.pay,sal_e.sal_regdate,sal_e.enddate from empleado as e inner join sal_emple as sal_e on e.id=sal_e.sal_id where sal_e.sal_id={id}"
     return sql
-def sal_emple_inner_where(currpage,perpage):
+def sal_emple_i_w_p(currpage,perpage):
     sql=f"select sal_e.id,sal_e.salario,sal_e.inPutOutput,sal_e.pay,sal_e.sal_regdate,sal_e.enddate from empleado as e inner join sal_emple as sal_e on e.id=sal_e.sal_id where sal_e.sal_id=? limit {(currpage-1)*perpage},{perpage}"
     return sql
 def sal_emple_count():
