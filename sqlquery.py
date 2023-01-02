@@ -16,7 +16,7 @@ def sal_createtbl():
         inPutOutput text not null,
         pay text not null,
         sal_regdate text default (strftime('%Y-%m-%d %H-%M-%S','now')),
-        enddate text,
+        enddate text  default (strftime('%Y-%m-%d','now','+3 days')) ,
         CONSTRAINT sal_emple_fk FOREIGN KEY(sal_id) REFERENCES empleado(id) ON DELETE CASCADE ON UPDATE CASCADE
         )"""
     return sql
@@ -78,8 +78,8 @@ def selectuser(nombre,edad):
 def selectusercnt(nombre,edad):
     sql=f"select count(*) from empleado where nombre='{nombre}' and edad='{edad}'"
     return sql
-def sal_emple_i_w(id):
-    sql=f"select sal_e.id,sal_e.salario,sal_e.inPutOutput,sal_e.pay,sal_e.sal_regdate,sal_e.enddate from empleado as e inner join sal_emple as sal_e on e.id=sal_e.sal_id where sal_e.sal_id={id}"
+def sal_emple_i_w():
+    sql=f"select sal_e.id,sal_e.salario,sal_e.inPutOutput,sal_e.pay,sal_e.sal_regdate,sal_e.enddate from empleado as e inner join sal_emple as sal_e on e.id=sal_e.sal_id where sal_e.sal_id=?"
     return sql
 def sal_emple_i_w_p(currpage,perpage):
     sql=f"select sal_e.id,sal_e.salario,sal_e.inPutOutput,sal_e.pay,sal_e.sal_regdate,sal_e.enddate from empleado as e inner join sal_emple as sal_e on e.id=sal_e.sal_id where sal_e.sal_id=? limit {(currpage-1)*perpage},{perpage}"

@@ -33,14 +33,19 @@ class editWindow(QDialog):
         self.id=id
         self.page=page
         self.sel=sel
-        print(self.id)
         self.show()
-        self.selectid(self.id)
+        if(sel==1):
+            self.selectid()
         self.aregar_Button.clicked.connect(self.onAgregar)
         self.aregar_Button.setText(self.label_text[sel])
 
-    def selectid(self,id):
-        return id
+    def selectid(self):
+        self.q.prepare(sqlquery.selectid())
+        self.q.addBindValue(self.id)
+        self.q.exec()
+        if self.q.next():
+            self.nombre_lineEdit.setText(str(self.q.value(1)))
+            self.edad_lineEdit.setText(str(self.q.value(3)))
 
     def onAgregar(self):
         try:
@@ -96,10 +101,11 @@ class saledit_MainWindow(QDialog):
         uic.loadUi(sal_file, self)
         self.q = QSqlQuery()
         self.id=id
-        print(self.id)
         self.sel=sel
         self.label_text = ['등록', '수정']
         self.aregar_Button.clicked.connect(self.updatebtn)
+        if(sel==1):
+            self.selectid()
         self.show()
         self.salario_lineEdit.setReadOnly(True)
         self.dry_checkBox.stateChanged.connect(self.checked)
@@ -178,11 +184,11 @@ class saledit_MainWindow(QDialog):
 
 
     def selectid(self):
-       self.q.prepare(sqlquery.selectid())
+       self.q.prepare(sqlquery.sal_emple_i_w())
        self.q.addBindValue(self.id)
        self.q.exec()
        if self.q.next():
-            self.salario_lineEdit.setText(self.q.value(4))
+            self.salario_lineEdit.setText(self.q.value(1))
 
     def updatebtn(self):
         salario = self.salario_lineEdit.text()
@@ -258,6 +264,9 @@ class seltblWindow(QDialog):
         self.btnadd.clicked.connect(self.sal_addbtn)
         self.btnupd.clicked.connect(self.sal_updbtn)
         self.btndel.clicked.connect(self.sal_btnDel)
+        self.searchprev.clicked.connect(self.sal_decrement)
+        self.searchnext.clicked.connect(self.sal_increment)
+
         self.sel_finish_signal.emit()
         self.show()
     def show_init(self):
@@ -275,26 +284,25 @@ class seltblWindow(QDialog):
         if self.totalblock == 1:
             self.searchnext.setVisible(False)
             self.searchprev.setVisible(False)
-        if self.page >= 1:
-            self.searchnext.setVisible(False)
+        if self.page > 1:
             self.searchprev.setVisible(True)
-            self.searchprev.clicked.connect(self.sal_decrement)
-        if self.page <= self.totalblock:
-            self.searchnext.setVisible(True)
+            if self.page != self.totalblock:
+                self.searchnext.setVisible(True)
+            else:
+                self.searchnext.setVisible(False)
+        else:
             self.searchprev.setVisible(False)
-            self.searchnext.clicked.connect(self.sal_increment)
-
     def selectuser(self):
         # print(self.sal_page)
         self.sel_tableWidget.setRowCount(0)
-        self.sel_tableWidget.setColumnCount(5)
+        self.sel_tableWidget.setColumnCount(6)
         # rowp = 0
         # if self.page == 1:
         #     rowp = self.totalcount() - self.perpage
         # rowcount = self.totalcount() - ((self.page - 1) * self.perpage) - rowp
         self.sel_tableWidget.setRowCount(self.perpage)
         self.sel_tableWidget.setHorizontalHeaderLabels(
-            ["id","작업", "입/출고", "선/후불", "작업등록일"])
+            ["id","작업", "입/출고", "선/후불", "작업등록일","작업마감일"])
         self.pagebtn()
         self.q.prepare(sqlquery.sal_emple_i_w_p(self.page,self.perpage))
         self.q.addBindValue(self.id)
@@ -306,6 +314,7 @@ class seltblWindow(QDialog):
             self.sel_tableWidget.setItem(tablerow, 2, QtWidgets.QTableWidgetItem(self.q.value(2)))
             self.sel_tableWidget.setItem(tablerow, 3, QtWidgets.QTableWidgetItem(self.q.value(3)))
             self.sel_tableWidget.setItem(tablerow, 4, QtWidgets.QTableWidgetItem(self.q.value(4)))
+            self.sel_tableWidget.setItem(tablerow, 5, QtWidgets.QTableWidgetItem(self.q.value(5)))
 
             tablerow += 1
         self.sel_tableWidget.resizeColumnsToContents()
@@ -430,21 +439,24 @@ class readMainWindow(QDialog):
     def sal_select(self):
         # print(self.sal_page)
         self.salsel_tableWidget.setRowCount(0)
-        self.salsel_tableWidget.setColumnCount(4)
+        self.salsel_tableWidget.setColumnCount(5)
         # rowp = 0
         # if self.page == 1:
         #     rowp = self.totalcount() - self.perpage
         # rowcount = self.totalcount() - ((self.page - 1) * self.perpage) - rowp
         self.salsel_tableWidget.setRowCount(self.totalcount())
         self.salsel_tableWidget.setHorizontalHeaderLabels(
-            ["id", "작업", "입/출고", "선/후불"])
-        self.q.exec(sqlquery.sal_emple_i_w(self.id))
+            ["id", "작업", "입/출고", "선/후불","작업마감일"])
+        self.q.prepare(sqlquery.sal_emple_i_w())
+        self.q.addBindValue(self.id)
+        self.q.exec()
         tablerow = 0
         while (self.q.next()):
             self.salsel_tableWidget.setItem(tablerow, 0, QtWidgets.QTableWidgetItem(str(self.q.value(0))))
             self.salsel_tableWidget.setItem(tablerow, 1, QtWidgets.QTableWidgetItem(self.q.value(1)))
             self.salsel_tableWidget.setItem(tablerow, 2, QtWidgets.QTableWidgetItem(self.q.value(2)))
             self.salsel_tableWidget.setItem(tablerow, 3, QtWidgets.QTableWidgetItem(self.q.value(3)))
+            self.salsel_tableWidget.setItem(tablerow, 4, QtWidgets.QTableWidgetItem(self.q.value(5)))
             # self.salsel_tableWidget.setItem(tablerow, 4, QtWidgets.QTableWidgetItem(self.q.value(4)))
             tablerow += 1
         self.salsel_tableWidget.resizeColumnsToContents()
@@ -509,6 +521,8 @@ class MainWindow(QDialog):
         self.insertbtn.clicked.connect(self.btnins)
         self.buttonUpdate.clicked.connect(self.regorderupdate)
         self.buttonDelAll.clicked.connect(self.btnDelAll)
+        self.searchprev.clicked.connect(self.decrement)
+        self.searchnext.clicked.connect(self.increment)
         self.page = 1
         self.perpage = 12
         self.pagebtn()
@@ -520,14 +534,15 @@ class MainWindow(QDialog):
         if self.totalblock==1:
             self.searchnext.setVisible(False)
             self.searchprev.setVisible(False)
-        if self.page >=1:
-            self.searchnext.setVisible(False)
+        if self.page >1:
             self.searchprev.setVisible(True)
-            self.searchprev.clicked.connect(self.decrement)
-        if self.page<=self.totalblock:
-            self.searchnext.setVisible(True)
+            if self.page!=self.totalblock:
+                self.searchnext.setVisible(True)
+            else:
+                self.searchnext.setVisible(False)
+        else:
             self.searchprev.setVisible(False)
-            self.searchnext.clicked.connect(self.increment)
+
 
     def nombretxtret(self):
         nombretxt=self.select_lineEdit.text()
