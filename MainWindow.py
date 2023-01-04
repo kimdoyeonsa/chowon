@@ -33,19 +33,14 @@ class editWindow(QDialog):
         self.id=id
         self.page=page
         self.sel=sel
+        print(self.id)
         self.show()
-        if(sel==1):
-            self.selectid()
+        self.selectid(self.id)
         self.aregar_Button.clicked.connect(self.onAgregar)
         self.aregar_Button.setText(self.label_text[sel])
 
-    def selectid(self):
-        self.q.prepare(sqlquery.selectid())
-        self.q.addBindValue(self.id)
-        self.q.exec()
-        if self.q.next():
-            self.nombre_lineEdit.setText(str(self.q.value(1)))
-            self.edad_lineEdit.setText(str(self.q.value(3)))
+    def selectid(self,id):
+        return id
 
     def onAgregar(self):
         try:
@@ -101,11 +96,10 @@ class saledit_MainWindow(QDialog):
         uic.loadUi(sal_file, self)
         self.q = QSqlQuery()
         self.id=id
+        print(self.id)
         self.sel=sel
         self.label_text = ['등록', '수정']
         self.aregar_Button.clicked.connect(self.updatebtn)
-        if(sel==1):
-            self.selectid()
         self.show()
         self.salario_lineEdit.setReadOnly(True)
         self.dry_checkBox.stateChanged.connect(self.checked)
@@ -184,11 +178,11 @@ class saledit_MainWindow(QDialog):
 
 
     def selectid(self):
-       self.q.prepare(sqlquery.sal_emple_i_w())
+       self.q.prepare(sqlquery.selectid())
        self.q.addBindValue(self.id)
        self.q.exec()
        if self.q.next():
-            self.salario_lineEdit.setText(self.q.value(1))
+            self.salario_lineEdit.setText(self.q.value(4))
 
     def updatebtn(self):
         salario = self.salario_lineEdit.text()
@@ -252,7 +246,7 @@ class seltblWindow(QDialog):
         # if self.q.next():
         #     self.selectuser(str())
         self.page = 1
-        self.perpage = 12
+        self.perpage = 10
         self.pagebtn()
         self.selectuser()
         self.salins_Window = saledit_MainWindow()
@@ -266,7 +260,6 @@ class seltblWindow(QDialog):
         self.btndel.clicked.connect(self.sal_btnDel)
         self.searchprev.clicked.connect(self.sal_decrement)
         self.searchnext.clicked.connect(self.sal_increment)
-
         self.sel_finish_signal.emit()
         self.show()
     def show_init(self):
@@ -281,17 +274,19 @@ class seltblWindow(QDialog):
         return count
     def pagebtn(self):
         self.show_init()
-        if self.totalblock == 1:
-            self.searchnext.setVisible(False)
+        if self.page == 1:
             self.searchprev.setVisible(False)
+            self.searchnext.setVisible(False)
         if self.page > 1:
             self.searchprev.setVisible(True)
+            self.searchnext.setVisible(False)
             if self.page != self.totalblock:
                 self.searchnext.setVisible(True)
             else:
                 self.searchnext.setVisible(False)
         else:
             self.searchprev.setVisible(False)
+            self.searchnext.setVisible(True)
     def selectuser(self):
         # print(self.sal_page)
         self.sel_tableWidget.setRowCount(0)
@@ -401,6 +396,7 @@ class readMainWindow(QDialog):
         # self.saludp_Window=salupdate_MainWindow()
         # self.saled_signal.connect(self.saludp_Window.show_dialog)
         self.updatemain.edit_finish_signal.connect(self.selectid)
+
         self.selectid()
         self.sal_select()
         # self.sal_updatebtn.setText('작업' + labeltext[self.salret()])
@@ -448,7 +444,7 @@ class readMainWindow(QDialog):
         self.salsel_tableWidget.setHorizontalHeaderLabels(
             ["id", "작업", "입/출고", "선/후불","작업마감일"])
         self.q.prepare(sqlquery.sal_emple_i_w())
-        self.q.addBindValue(self.id)
+        self.q.bindValue(0,self.id)
         self.q.exec()
         tablerow = 0
         while (self.q.next()):
@@ -521,28 +517,31 @@ class MainWindow(QDialog):
         self.insertbtn.clicked.connect(self.btnins)
         self.buttonUpdate.clicked.connect(self.regorderupdate)
         self.buttonDelAll.clicked.connect(self.btnDelAll)
-        self.searchprev.clicked.connect(self.decrement)
-        self.searchnext.clicked.connect(self.increment)
         self.page = 1
-        self.perpage = 12
+        self.perpage = 10
         self.pagebtn()
         self.loaddata()
+        self.searchprev.clicked.connect(self.decrement)
+        self.searchnext.clicked.connect(self.increment)
+
     def show_init(self):
         self.totalblock=ceil(self.totalcount()/self.perpage)
     def pagebtn(self):
         self.show_init()
-        if self.totalblock==1:
-            self.searchnext.setVisible(False)
+        print(self.page, self.totalblock)
+        if self.page==1:
             self.searchprev.setVisible(False)
-        if self.page >1:
+            self.searchnext.setVisible(False)
+        if self.page > 1:
             self.searchprev.setVisible(True)
-            if self.page!=self.totalblock:
+            self.searchnext.setVisible(False)
+            if self.page != self.totalblock:
                 self.searchnext.setVisible(True)
             else:
                 self.searchnext.setVisible(False)
         else:
             self.searchprev.setVisible(False)
-
+            self.searchnext.setVisible(True)
 
     def nombretxtret(self):
         nombretxt=self.select_lineEdit.text()
