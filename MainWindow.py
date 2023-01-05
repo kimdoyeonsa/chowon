@@ -64,7 +64,7 @@ class editWindow(QDialog):
                     self.q.bindValue(1, nombre)
                     self.q.bindValue(2, dong_name)
                     self.q.bindValue(3, edad)
-                elif self.sel==1:
+                else:
                     self.q.prepare(sqlquery.update())
                     self.q.bindValue(0, nombre)
                     self.q.bindValue(1, dong_name)
@@ -87,12 +87,11 @@ class editWindow(QDialog):
 
 sal_file = common.resource_path("./sal_update.ui")
 class saledit_MainWindow(QDialog):
-    saledit_finish_signal = pyqtSignal() ##### 추가
+    saledit_finish_signal = pyqtSignal()
+    saladd_finish_signal = pyqtSignal()
     def __init__(self,):
         QDialog.__init__(self)
-        ####### __init__()에 있는 문장들을 아래 show_dialog() 함수로 다 옮김
-
-    def show_dialog(self,id,sel): ######## 추가
+    def show_dialog(self,id,sel):
         uic.loadUi(sal_file, self)
         self.q = QSqlQuery()
         self.id=id
@@ -132,43 +131,33 @@ class saledit_MainWindow(QDialog):
         if self.dry_checkBox.isChecked():
             self.dry = "드라이"
             arr.append(self.dry)
-        #     self.salario_lineEdit.insert(self.dry)
         if self.repair_checkBox.isChecked():
             self.repair = "수선"
             arr.append(self.repair)
-            # self.salario_lineEdit.insert(self.repair)
         if self.iron_checkBox.isChecked() == True:
             self.iron = "아이롱"
             arr.append(self.iron)
-            # self.salario_lineEdit.insert(self.iron)
         if self.outdoor_checkBox.isChecked() == True:
             self.outdoor = "잠바"
             arr.append(self.outdoor)
-            # self.salario_lineEdit.append(f'{self.outdoor}')
         if self.long_checkBox.isChecked() == True:
             self.long = "롱패딩"
             arr.append(self.long)
-            # self.salario_lineEdit.append(f'{self.long}')
         if self.cote_checkBox.isChecked() == True:
             self.cote = "코트"
             arr.append(self.cote)
-            # self.salario_lineEdit.append(f'{self.cote}')
         if self.sweater_checkBox.isChecked() == True:
             self.sweater = "스웨터"
             arr.append(self.sweater)
-            # self.salario_lineEdit.append(f'{self.sweater}')
         if self.pent_checkBox.isChecked() == True:
             self.pent = "바지"
             arr.append(self.pent)
-            # self.salario_lineEdit.append(f'{self.pent}')
         if self.cloth_checkBox.isChecked() == True:
             self.cloth = "상의"
             arr.append(self.cloth)
-            # self.salario_lineEdit.append(f'{self.cloth}')
         if self.set_checkBox.isChecked() == True:
             self.set = "한벌"
             arr.append(self.set)
-            # self.salario_lineEdit.append(f'{self.set}')
         if self.ycloth_checkBox.isChecked() == True:
             self.ycloth = "Y셔츠"
             arr.append(self.ycloth)
@@ -199,7 +188,7 @@ class saledit_MainWindow(QDialog):
                 self.q.bindValue(2,salario)
                 self.q.bindValue(3, inPutOutput)
                 self.q.bindValue(4,pay)
-            elif self.sel==1:
+            else:
                 self.q.prepare(sqlquery.sal_update())
                 self.q.bindValue(0, salario)
                 self.q.bindValue(1, inPutOutput)
@@ -207,8 +196,6 @@ class saledit_MainWindow(QDialog):
                 self.q.bindValue(3,str(self.id))
             if (self.q.exec() == True):
                 if (QMessageBox.question(self, "OK", '작업을 '+self.label_text[self.sel]+" 할까요?", QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes):
-                    # self.dong_name_combo.clear()
-                    # self.inPutOutput.clear()
                     self.salario_lineEdit.clear()
                     self.dry_checkBox.setChecked(False)
                     self.repair_checkBox.setChecked(False)
@@ -221,12 +208,10 @@ class saledit_MainWindow(QDialog):
                     self.cloth_checkBox.setChecked(False)
                     self.set_checkBox.setChecked(False)
                     self.ycloth_checkBox.setChecked(False)
+                    self.saladd_finish_signal.emit()
                     QMessageBox.about(self, self.label_text[self.sel]+"완료", self.label_text[self.sel]+"완료 하였습니다.")
         self.close()
-        # main = MainWindow() ##### 삭제
-        # main.loaddata() ##### 삭제
-        self.saledit_finish_signal.emit()  ##### 추가
-
+        self.saledit_finish_signal.emit()
     def msgexec(self):
            return QMessageBox.exec()
 sel_file = common.resource_path("./seltbl.ui")
@@ -234,17 +219,14 @@ class seltblWindow(QDialog):
     sel_finish_signal = pyqtSignal()
     sal_ins_signal = pyqtSignal(str, int)
     sal_upd_signal = pyqtSignal(str, int)
+    saladd_btn_signal=pyqtSignal()
+    saldel_btn_signal=pyqtSignal()
     def __init__(self, ):
         QDialog.__init__(self)
     def show_dialog(self, id):
         uic.loadUi(sel_file, self)
         self.q = QSqlQuery()
         self.id = id
-        # self.q.prepare(sqlquery.selectid())
-        # self.q.addBindValue(self.id)
-        # self.q.exec()
-        # if self.q.next():
-        #     self.selectuser(str())
         self.page = 1
         self.perpage = 10
         self.pagebtn()
@@ -255,6 +237,8 @@ class seltblWindow(QDialog):
         self.salupd_Window = saledit_MainWindow()
         self.sal_upd_signal.connect(self.salupd_Window.show_dialog)
         self.salupd_Window.saledit_finish_signal.connect(self.selectuser)
+        self.salins_Window.saladd_finish_signal.connect(self.sal_add_signal_func)
+        self.salupd_Window.saladd_finish_signal.connect(self.sal_add_signal_func)
         self.btnadd.clicked.connect(self.sal_addbtn)
         self.btnupd.clicked.connect(self.sal_updbtn)
         self.btndel.clicked.connect(self.sal_btnDel)
@@ -262,6 +246,8 @@ class seltblWindow(QDialog):
         self.searchnext.clicked.connect(self.sal_increment)
         self.sel_finish_signal.emit()
         self.show()
+    def sal_add_signal_func(self):
+        self.saladd_btn_signal.emit()
     def show_init(self):
         self.totalblock = ceil(self.totalcount() / self.perpage)
     def totalcount(self):
@@ -288,13 +274,8 @@ class seltblWindow(QDialog):
             self.searchprev.setVisible(False)
             self.searchnext.setVisible(True)
     def selectuser(self):
-        # print(self.sal_page)
         self.sel_tableWidget.setRowCount(0)
         self.sel_tableWidget.setColumnCount(6)
-        # rowp = 0
-        # if self.page == 1:
-        #     rowp = self.totalcount() - self.perpage
-        # rowcount = self.totalcount() - ((self.page - 1) * self.perpage) - rowp
         self.sel_tableWidget.setRowCount(self.perpage)
         self.sel_tableWidget.setHorizontalHeaderLabels(
             ["id","작업", "입/출고", "선/후불", "작업등록일","작업마감일"])
@@ -339,8 +320,8 @@ class seltblWindow(QDialog):
             print()
     def sal_updbtn(self):
         try:
-            crow = self.sel_tableWidget.currentRow()  # 현재의 row를 가져옮.
-            sal_id = self.sel_tableWidget.item(crow, 0).text()  # item에서 row,col
+            crow = self.sel_tableWidget.currentRow()
+            sal_id = self.sel_tableWidget.item(crow, 0).text()
             self.sal_upd_signal.emit(sal_id, 1)
         except:
             print()
@@ -348,26 +329,17 @@ class seltblWindow(QDialog):
         try:
             if QMessageBox.question(self, "Elminar", "지울까요?", QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
                 self.q.prepare(sqlquery.sal_delete())
-                crow = self.sel_tableWidget.currentRow()  # 현재의 row를 가져옮.
-                sal_id = self.sel_tableWidget.item(crow, 0).text()  # item에서 row,col
+                crow = self.sel_tableWidget.currentRow()
+                sal_id = self.sel_tableWidget.item(crow, 0).text()
                 self.q.bindValue(0, sal_id)
                 if self.q.exec() == True:
                     QMessageBox.warning(self, "Elminar", "지웠습니다")
                     self.selectuser()
                     self.sel_finish_signal.emit()
+                    self.saldel_btn_signal.emit()
+
         except:
             QMessageBox.warning(self, "Elminar", "선택이 되어있지 않습니다.")
-
-        # def selcount(self):
-        #     self.q.exec(sqlquery.selectusercnt())
-        #     self.q.addBindValue(self.nombre)
-        #     self.q.addBindValue(self.edad)
-        #     count = 0
-        #     if self.q.next():
-        #         count = self.q.value(1)
-        #     return count
-
-
 read_file = common.resource_path("./read.ui")
 class readMainWindow(QDialog):
     saled_signal = pyqtSignal(str, int)
@@ -384,34 +356,19 @@ class readMainWindow(QDialog):
         print(self.id)
         self.page=page
         self.updatemain = editWindow()
-        # labeltext=['등록','수정']
         self.ed_signal.connect(self.updatemain.show_dialog)
         self.closebtn.clicked.connect(self.close_btn)
         self.selmain=seltblWindow()
+        self.selmain.saldel_btn_signal.connect(self.sal_select)
+        self.selmain.saladd_btn_signal.connect(self.sal_select)
         self.sel_signal.connect(self.selmain.show_dialog)
         self.selbtn.clicked.connect(self.selectbtn)
         self.deletebtn.clicked.connect(self.btnDel)
-        # self.sal_updatebtn.clicked.connect(self.salbtnupd)
         self.user_updatebtn.clicked.connect(self.btnupd)
-        # self.saludp_Window=salupdate_MainWindow()
-        # self.saled_signal.connect(self.saludp_Window.show_dialog)
         self.updatemain.edit_finish_signal.connect(self.selectid)
-
         self.selectid()
         self.sal_select()
-        # self.sal_updatebtn.setText('작업' + labeltext[self.salret()])
         self.show()
-
-
-    # self.q.prepare(sqlquery.selectid())
-    # self.q.addBindValue(self.id)
-    # self.q.exec()
-    # if self.q.next():
-    #     if self.q.value(4)!="":
-    #         return 1
-    #     else:
-    #         return 0
-
     def selectid(self):
        self.q.prepare(sqlquery.selectid())
        self.q.addBindValue(self.id)
@@ -419,10 +376,8 @@ class readMainWindow(QDialog):
        if self.q.next():
             self.nombre_lineEdit.setText(self.q.value(1))
             self.dong_name_lineEdit.setText(self.q.value(2))
-            # self.salario_lineEdit.setText(self.q.value(4))
             self.edad_lineEdit.setText(str(self.q.value(3)))
             self.regdate_lineEdit.setText(str(self.q.value(4)))
-
        self.read_finish_signal.emit()
     def totalcount(self):
         self.q.prepare(sqlquery.sal_emple_count())
@@ -433,13 +388,8 @@ class readMainWindow(QDialog):
             count=self.q.value(0)
         return count
     def sal_select(self):
-        # print(self.sal_page)
         self.salsel_tableWidget.setRowCount(0)
         self.salsel_tableWidget.setColumnCount(5)
-        # rowp = 0
-        # if self.page == 1:
-        #     rowp = self.totalcount() - self.perpage
-        # rowcount = self.totalcount() - ((self.page - 1) * self.perpage) - rowp
         self.salsel_tableWidget.setRowCount(self.totalcount())
         self.salsel_tableWidget.setHorizontalHeaderLabels(
             ["id", "작업", "입/출고", "선/후불","작업마감일"])
@@ -453,17 +403,11 @@ class readMainWindow(QDialog):
             self.salsel_tableWidget.setItem(tablerow, 2, QtWidgets.QTableWidgetItem(self.q.value(2)))
             self.salsel_tableWidget.setItem(tablerow, 3, QtWidgets.QTableWidgetItem(self.q.value(3)))
             self.salsel_tableWidget.setItem(tablerow, 4, QtWidgets.QTableWidgetItem(self.q.value(5)))
-            # self.salsel_tableWidget.setItem(tablerow, 4, QtWidgets.QTableWidgetItem(self.q.value(4)))
             tablerow += 1
         self.salsel_tableWidget.resizeColumnsToContents()
 
     def close_btn(self):
         self.close()
-    # def salbtnupd(self):
-    #     try:
-    #         self.saled_signal.emit(self.id,0)
-    #     except:
-    #         pass
     def btnupd(self):
         try:
            self.ed_signal.emit(self.id,self.page,1)
@@ -492,28 +436,17 @@ class MainWindow(QDialog):
     read_signal = pyqtSignal(str,int)
     def __init__(self):
         QDialog.__init__(self)
-
         uic.loadUi(ui_file, self)
-
         self.q = QSqlQuery()
-        self.read_dialog = readMainWindow()  ##### 추가
-        self.read_signal.connect(self.read_dialog.show_dialog)  ##### 추가
+        self.read_dialog = readMainWindow()
+        self.read_signal.connect(self.read_dialog.show_dialog)
         self.read_dialog.read_finish_signal.connect(self.loaddata)
         self.read_dialog.id_signal.connect(self.loaddata)
-        self.insertWindow = editWindow()  ##### 추가
-        self.signal.connect(self.insertWindow.show_dialog)  ##### 추가
-        self.insertWindow.edit_finish_signal.connect(self.loaddata)  ##### 추가
-        # self.updatemain = updateMainWindow()  ##### 추가
-        # self.id_signal.connect(self.updatemain.show_dialog)  ##### 추가
-        # self.updatemain=updateMainWindow()
-        # self.updatemain.edit_finish_signal.connect(self.loaddata)  ##### 추가
-        # self.updatemain.edit_finish_signal.connect(self.loaddata)
-        # self.read_dialog = readMainWindow()  ##### 추가
-        # self.read_signal.connect(self.read_dialog.show_dialog)  ##### 추가
-        # self.read_dialog.id_signal.connect(self.loaddata)
+        self.insertWindow = editWindow()
+        self.signal.connect(self.insertWindow.show_dialog)
+        self.insertWindow.edit_finish_signal.connect(self.loaddata)
         self.select_lineEdit.returnPressed.connect(self.loaddata)
         self.select_Widget.clicked.connect(self.read)
-        # self.updatebtn.clicked.connect(self.btnupd)
         self.insertbtn.clicked.connect(self.btnins)
         self.buttonUpdate.clicked.connect(self.regorderupdate)
         self.buttonDelAll.clicked.connect(self.btnDelAll)
@@ -567,10 +500,6 @@ class MainWindow(QDialog):
     def loaddata(self):
         self.select_Widget.setRowCount(0)
         self.select_Widget.setColumnCount(5)
-        # rowp = 0
-        # if self.page == 1:
-        #     rowp = self.totalcount() - self.perpage
-        # rowcount = self.totalcount() - ((self.page - 1) * self.perpage) - rowp
         self.select_Widget.setRowCount(self.perpage)
         self.select_Widget.setHorizontalHeaderLabels(
             ["id", "이름","동/호수", "연락처", "등록일"])
@@ -609,28 +538,9 @@ class MainWindow(QDialog):
                 self.searchprev.setVisible(True)
         except:
             print()
-
-
-    # def btnDel(self):
-    #      try:
-    #          crow = self.select_Widget.currentRow() #현재의 row를 가져옮.
-    #          id = self.select_Widget.item(crow, 0).text()#item에서 row,column값의 텍스트를 가져옮
-    #          if QMessageBox.question(self, "Elminar", "지울까요?", QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
-    #              self.q.prepare(sqlquery.delete())
-    #              self.q.bindValue(0,str(id))
-    #              if self.q.exec()==True:
-    #                  QMessageBox.warning(self,"Elminar","지웠습니다")
-    #              self.loaddata()
-    #      except:
-    #          QMessageBox.warning(self, "Elminar", "선택이 되어있지 않습니다.")
-
     def regorderupdate(self):
         self.select_Widget.setRowCount(0)
         self.select_Widget.setColumnCount(5)
-        # rowp = 0
-        # if self.page == 1:
-        #     rowp = self.totalcount() - self.perpage
-        # rowcount = self.totalcount() - ((self.page - 1) * self.perpage) - rowp
         self.select_Widget.setRowCount(self.perpage)
         self.select_Widget.setHorizontalHeaderLabels(
             ["id", "이름", "동/호수", "연락처", "등록일"])
@@ -657,22 +567,12 @@ class MainWindow(QDialog):
         if QMessageBox.question(self, "Elminar", "다 지울까요?", QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
             self.q.exec(sqlquery.deleteall())
             self.loaddata()
-    # def btnupd(self):
-    #     try:
-    #         crow = self.select_Widget.currentRow()  # 현재의 row를 가져옮.
-    #         id = self.select_Widget.item(crow, 0).text()  # item에서 row,column값의 텍스트를 가져옮
-    #         self.id_signal.emit(id)
-    #     except:
-    #         QMessageBox.warning(self, "update", "선택이 되어있지 않습니다.")
-
     def btnins(self):
         try:
             nextval=int(maxval("empleado"))
             self.signal.emit(nextval,self.page,0)
         except:
             print()
-
-
 def maxval(tbl):
     q = QSqlQuery()
     q.exec(sqlquery.selectmax(tbl))
@@ -686,8 +586,6 @@ def start():
     w = MainWindow()
     w.show()
     sys.exit(app.exec_())
-
-
 if __name__ == "__main__":
     prepareDatabase()
     start()
