@@ -22,7 +22,7 @@ def prepareDatabase():
     q.exec(sqlquery.pragma_on())
 edit_file = common.resource_path("./edit.ui")
 class editWindow(QDialog):
-    edit_finish_signal = pyqtSignal()  ##### 추가
+    edit_finish_signal = pyqtSignal()
     def __init__(self,):
         QDialog.__init__(self)
 
@@ -88,7 +88,7 @@ class editWindow(QDialog):
 sal_file = common.resource_path("./sal_update.ui")
 class saledit_MainWindow(QDialog):
     saledit_finish_signal = pyqtSignal()
-    saladd_finish_signal = pyqtSignal()
+    saladd_finish_signal = pyqtSignal() #1
     def __init__(self,):
         QDialog.__init__(self)
     def show_dialog(self,id,sel):
@@ -208,7 +208,7 @@ class saledit_MainWindow(QDialog):
                     self.cloth_checkBox.setChecked(False)
                     self.set_checkBox.setChecked(False)
                     self.ycloth_checkBox.setChecked(False)
-                    self.saladd_finish_signal.emit()
+                    self.saladd_finish_signal.emit() #1
                     QMessageBox.about(self, self.label_text[self.sel]+"완료", self.label_text[self.sel]+"완료 하였습니다.")
         self.close()
         self.saledit_finish_signal.emit()
@@ -219,8 +219,8 @@ class seltblWindow(QDialog):
     sel_finish_signal = pyqtSignal()
     sal_ins_signal = pyqtSignal(str, int)
     sal_upd_signal = pyqtSignal(str, int)
-    saladd_btn_signal=pyqtSignal()
-    saldel_btn_signal=pyqtSignal()
+    saladd_btn_signal=pyqtSignal() #1
+    saldel_btn_signal=pyqtSignal() #1
     def __init__(self, ):
         QDialog.__init__(self)
     def show_dialog(self, id):
@@ -237,8 +237,8 @@ class seltblWindow(QDialog):
         self.salupd_Window = saledit_MainWindow()
         self.sal_upd_signal.connect(self.salupd_Window.show_dialog)
         self.salupd_Window.saledit_finish_signal.connect(self.selectuser)
-        self.salins_Window.saladd_finish_signal.connect(self.sal_add_signal_func)
-        self.salupd_Window.saladd_finish_signal.connect(self.sal_add_signal_func)
+        self.salins_Window.saladd_finish_signal.connect(self.sal_add_signal_func) #1
+        self.salupd_Window.saladd_finish_signal.connect(self.sal_add_signal_func) #1
         self.btnadd.clicked.connect(self.sal_addbtn)
         self.btnupd.clicked.connect(self.sal_updbtn)
         self.btndel.clicked.connect(self.sal_btnDel)
@@ -246,6 +246,7 @@ class seltblWindow(QDialog):
         self.searchnext.clicked.connect(self.sal_increment)
         self.sel_finish_signal.emit()
         self.show()
+    #1
     def sal_add_signal_func(self):
         self.saladd_btn_signal.emit()
     def show_init(self):
@@ -358,9 +359,9 @@ class readMainWindow(QDialog):
         self.updatemain = editWindow()
         self.ed_signal.connect(self.updatemain.show_dialog)
         self.closebtn.clicked.connect(self.close_btn)
-        self.selmain=seltblWindow()
-        self.selmain.saldel_btn_signal.connect(self.sal_select)
-        self.selmain.saladd_btn_signal.connect(self.sal_select)
+        self.selmain=seltblWindow() #1
+        self.selmain.saldel_btn_signal.connect(self.sal_select) #1
+        self.selmain.saladd_btn_signal.connect(self.sal_select) #1
         self.sel_signal.connect(self.selmain.show_dialog)
         self.selbtn.clicked.connect(self.selectbtn)
         self.deletebtn.clicked.connect(self.btnDel)
