@@ -6,7 +6,7 @@ def createtbl():
         nombre text not null, 
         dong_name text not null,
         edad integer not null, 
-        regdate text default (strftime('%Y-%m-%d %H-%M-%S','now')) 
+        regdate text default (strftime('%Y-%m-%d','now')) 
         )"""
     return sql
 def sal_createtbl():
@@ -15,7 +15,7 @@ def sal_createtbl():
         salario text,
         inPutOutput text not null,
         pay text not null,
-        sal_regdate text default (strftime('%Y-%m-%d %H-%M-%S','now')),
+        sal_regdate text default (strftime('%Y-%m-%d','now')),
         enddate text  default (strftime('%Y-%m-%d','now','+3 days')) ,
         CONSTRAINT sal_emple_fk FOREIGN KEY(sal_id) REFERENCES empleado(id) ON DELETE CASCADE ON UPDATE CASCADE
         )"""
@@ -58,7 +58,9 @@ def selectpage(keyfield,txt,currpage,perpage,orderby):
     sql=f"select * from empleado"
     if txt!="":
         sql+=" where "+keyfield+" like \"%" + txt + "%\""
-    sql+=f" order by regdate {orderby} limit {(currpage-1)*perpage},{perpage} "
+    if orderby!="":
+        sql+=f" order by regdate {orderby},id {orderby}"
+    sql+=f" limit {(currpage-1)*perpage},{perpage} "
     return sql
 def search(keyfield,txt):
     sql="select * from empleado where "+keyfield+" like '%" + txt + "%' order by id desc "

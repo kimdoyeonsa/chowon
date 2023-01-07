@@ -35,26 +35,29 @@ class editWindow(QDialog):
         self.sel=sel
         print(self.id)
         self.show()
-        self.selectid(self.id)
+        self.selectid()
         self.aregar_Button.clicked.connect(self.onAgregar)
         self.aregar_Button.setText(self.label_text[sel])
 
-    def selectid(self,id):
-        return id
+    def selectid(self):
+        self.q.prepare(sqlquery.selectid())
+        self.q.addBindValue(self.id)
+        self.q.exec()
+        if self.q.next():
+            self.nombre_lineEdit.setText(self.q.value(1))
+            self.edad_lineEdit.setText(str(self.q.value(3)))
 
     def onAgregar(self):
         try:
             dong_name = self.dong_name_combo.currentText()
             nombre = self.nombre_lineEdit.text()
             edad = self.edad_lineEdit.text()
+
             if dong_name == "이름/아파트명":
                 QMessageBox.warning(self, "Error", "이름/아파트명을 넣으세요")
 
             if nombre == "":
                 QMessageBox.warning(self, "Error", "이름을 넣으세요")
-
-            if edad == "":
-                QMessageBox.warning(self, "Error", "연락처를 넣으세요")
 
             else:
                 if self.sel==0:
@@ -449,10 +452,11 @@ class MainWindow(QDialog):
         self.select_lineEdit.returnPressed.connect(self.loaddata)
         self.select_Widget.clicked.connect(self.read)
         self.insertbtn.clicked.connect(self.btnins)
-        self.buttonUpdate.clicked.connect(self.regorderupdate)
         self.buttonDelAll.clicked.connect(self.btnDelAll)
         self.page = 1
         self.perpage = 10
+        self.orderby="asc"
+        self.buttonUpdate.clicked.connect(self.regorderupdate)
         self.pagebtn()
         self.loaddata()
         self.searchprev.clicked.connect(self.decrement)
@@ -477,6 +481,16 @@ class MainWindow(QDialog):
             self.searchprev.setVisible(False)
             self.searchnext.setVisible(True)
 
+
+    def regorderupdate(self):
+        if self.buttonUpdate.isChecked():
+            self.orderby="desc"
+            self.buttonUpdate.setText("지난등록순")
+            self.loaddata()
+        else:
+            self.orderby = "asc"
+            self.buttonUpdate.setText("최신등록순")
+            self.loaddata()
     def nombretxtret(self):
         nombretxt=self.select_lineEdit.text()
         return nombretxt
@@ -505,7 +519,7 @@ class MainWindow(QDialog):
         self.select_Widget.setHorizontalHeaderLabels(
             ["id", "이름","동/호수", "연락처", "등록일"])
         self.pagebtn()
-        self.q.exec(sqlquery.selectpage(self.comboboxret(),self.nombretxtret(),self.page,self.perpage,"asc"))
+        self.q.exec(sqlquery.selectpage(self.comboboxret(),self.nombretxtret(),self.page,self.perpage,self.orderby))
         tablerow=0
         while(self.q.next()):
            self.select_Widget.setItem(tablerow, 0, QtWidgets.QTableWidgetItem(str(self.q.value(0))))
@@ -539,23 +553,7 @@ class MainWindow(QDialog):
                 self.searchprev.setVisible(True)
         except:
             print()
-    def regorderupdate(self):
-        self.select_Widget.setRowCount(0)
-        self.select_Widget.setColumnCount(5)
-        self.select_Widget.setRowCount(self.perpage)
-        self.select_Widget.setHorizontalHeaderLabels(
-            ["id", "이름", "동/호수", "연락처", "등록일"])
-        self.pagebtn()
-        self.q.exec(sqlquery.selectpage(self.comboboxret(), self.nombretxtret(), self.page, self.perpage, "desc"))
-        tablerow = 0
-        while (self.q.next()):
-            self.select_Widget.setItem(tablerow, 0, QtWidgets.QTableWidgetItem(str(self.q.value(0))))
-            self.select_Widget.setItem(tablerow, 1, QtWidgets.QTableWidgetItem(str(self.q.value(1))))
-            self.select_Widget.setItem(tablerow, 2, QtWidgets.QTableWidgetItem(str(self.q.value(2))))
-            self.select_Widget.setItem(tablerow, 3, QtWidgets.QTableWidgetItem(str(self.q.value(3))))
-            self.select_Widget.setItem(tablerow, 4, QtWidgets.QTableWidgetItem(self.q.value(4)))
-            tablerow += 1
-        self.select_Widget.resizeColumnsToContents()
+
     def read(self):
         try:
             crow = self.select_Widget.currentRow()  # 현재의 row를 가져옮.
